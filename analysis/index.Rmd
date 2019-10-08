@@ -1,11 +1,105 @@
 ---
-title: "Home"
+title: "Harrison Wood"
 site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
-    toc: false
+    toc: true
 editor_options:
   chunk_output_type: console
 ---
+|    |    |    |
+|:---|:--:|---:|
+|*54 Rowena Parade, Richmond, 3121 VIC* | *+61 406 137 037* | harrison.wood@mcri.edu.au|
 
-Welcome to my research website.
+<br></br>
+This digital resume includes two brief vignettes of my past work for your consideration. These are an [analysis of RNA sequencing data](Dexamethasone-study.html) describing a drug study in mice and a [statistical analysis of blood parameters](Full-blood-count-analysis.html) assessed in a knockout mouse model. 
+
+## Education
+
+#### 2018
+* The University of Queensland
+  - **Bachelor of Biomedical Science (Hons I)**
+  - Thesis: *"On the Neural Development and Organisation of Hearing in Larval Zebrafish"*
+
+## Awards
+
+#### October 2018
+* Graduate Records Examination (**GRE**) results
+  - Verbal reasoning: raw score of 168, **98<sup>th</sup> percentile**
+  - Quantitative reasoning: raw score of 160, **74<sup>th</sup> percentile**
+  - Analytical writing: raw score of 5.5, **98<sup>th</sup> percentile**
+
+#### Honours year, 2017-2018
+* Dean's Commendation for Academic Excellence
+
+#### Semester 2, 2012
+* Dean's Commendation for High Achievement
+
+#### January 2012
+* UQ Excellence Scholarship
+
+#### January 2011
+* Recipient of the **Australian Student Prize**
+* Queensland Certificate of Education **OP1, ATAR 99.95 equivalent**
+* Dux of A.B. Paterson College
+
+## Research Experience
+
+#### May 2018 - Present
+##### Research assistance at the Murdoch Children's Research Institute
+Current research projects include analysis of RNA sequencing data resulting from two separate projects (**manuscripts in preparation**), phenotyping of novel mouse models of muscular dystrophinopathies, and genomic analysis of population-level expression data pertaining to highly prevalent nonsense mutations. 
+
+Experimental work includes surgical and electrophysiological techniques in live animals, dissection, and standard wet laboratory techniques in molecular biology. 
+
+#### 2017-2018
+##### Honours thesis
+One year project in circuit-level neuroscience, investigating the development of hearing in the growing zebrafish brain. This thesis involved Calcium imaging of transgenic larval animals, light sheet microscopy, and large scale data analysis. Awarded **First class Honours**.
+
+* Designed and managed my own experiments and analyses
+* Presented two seminars, receiving High Distinctions for both
+* Contributed to weekly lab meetings and assisted lab members with data analysis, experimental design, and animal husbandry
+
+#### January 2017
+##### Summer semester research project
+Six week project in the assessment of clustering methods for analysis of neural activity data. The project involved processing and analysis of data in MATLAB and Python to determine optimal methods of identifying functional units of neural function.
+
+Awarded a Distinction.
+
+##### BIOC3005/6 Systems Biochemistry tutoring
+Responsible for tutoring and assisting in the management of practicals in BIOC3005/6 Molecular Systems Biology at The University of Queensland. Assessed work, presented instructions, and answered student questions about biochemistry, metabolism, and systems-level data analysis. Tutored students in the use of Amix and Chenomx for processing and analysis of MS/MS data, and the theory of principal component analysis.
+
+#### 2016
+##### Biomedical sciences capstone course
+Six month project in investigating reproductive phenotypes in *C. elegans*.
+
+* Maintained experimental animals
+* Conducted pharmacological, behavioural, and microscopy-based assays
+* Designed and managed experiments in a small student team
+
+Awarded a High Distinction. 
+
+## Technical skills
+
+### Data analysis
+I have experience in the use of R, MATLAB, and Python for the processing, analysis, and interpretation of large scientific datasets. I have handled and processed datasets in a UNIX based environment and have experience queueing jobs on shared clusters using SLURM. For an example of my work, please browse the pages linked in the header. 
+
+I received undegraduate level training in Python and R during my degree, and expanded on this in a self-taught capacity as a result of strong personal interest in the area. I also have experience in quantitative image analysis using FIJI and Icy. 
+
+### Wet lab
+I am proficient in a full complement of standard bench techniques including Western blots, PCR and electrophoresis, ELISA, and cytokine assays. I have experience with microbial and tissue culture and am trained in sterile technique.
+
+### Animal work
+I have performed >300 dissections on mice and >100 lower-limb surgeries, with extensive experience with the electrophysiology of the neuromuscular system. I have experience with animal husbandry in mice and zebrafish, and have some experience in the handling of larger animals including dogs, cats, and birds, obtained during volunteer work with the Animal Welfare League, Queensland.
+
+## References
+
+#### Current supervisor
+Dr. **Peter Houweling**
+
+Senior Research Officer and Team Leader, Neuromuscular Research Group
+
+Murdoch Children's Research Institute
+
+peter.houweling@mcri.edu.au
+
+*+61 430 584 588*
