@@ -1,14 +1,14 @@
-name: harrison-wood-resume
+name: Harrison Wood
 output_dir: ../docs
 navbar:
-  title: harrison-wood-resume
+  title: Harrison Wood
   left:
-  - text: Home
+  - text: Resume
     href: index.html
-  - text: About
-    href: about.html
-  - text: License
-    href: license.html
+  - text: RNA-seq analysis
+    href: Dexamethasone-study.html
+  - text: Phenotypic analysis
+    href: Full-blood-count-analysis.html
   right:
   - icon: fa-github
     text: Source code
