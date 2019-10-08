@@ -349,18 +349,18 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">harrison-wood-resume</a>
+      <a class="navbar-brand" href="index.html">Harrison Wood</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">Resume</a>
 </li>
 <li>
-  <a href="about.html">About</a>
+  <a href="Dexamethasone-study.html">RNA-seq analysis</a>
 </li>
 <li>
-  <a href="license.html">License</a>
+  <a href="Full-blood-count-analysis.html">Phenotypic analysis</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -505,10 +505,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetree79272274970c260673e281eaf6ba23b2a7fc966dtargetblank7927227a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/harrisonwood/harrison-wood-resume/tree/79272274970c260673e281eaf6ba23b2a7fc966d" target="_blank">7927227</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetreea738a7be48ab24f2e11a68a3982e07809666da0dtargetblanka738a7ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/harrisonwood/harrison-wood-resume/tree/a738a7be48ab24f2e11a68a3982e07809666da0d" target="_blank">a738a7b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetree79272274970c260673e281eaf6ba23b2a7fc966dtargetblank7927227a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetreea738a7be48ab24f2e11a68a3982e07809666da0dtargetblanka738a7ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -518,11 +518,11 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
+    Untracked:  VennDiagram2019-10-08_13-07-32.log
     Untracked:  code/common-functions.R
     Untracked:  data/Dexamethasone-study/
     Untracked:  data/Summary-blood-data.xlsx
     Untracked:  output/Dexamethasone-study/
-    Untracked:  public/
 
 Unstaged changes:
     Modified:   Workflowr-initialisation-script.R
@@ -564,6 +564,23 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/harrisonwood/harrison-wood-resume/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/Dexamethasone-study.html" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -775,7 +792,81 @@ if (excludeUnwantedGenes) {
 <div id="checking-sequencing-efficacy" class="section level2">
 <h2>Checking sequencing efficacy</h2>
 <p>Library sizes across samples do not exhibit an obvious bias in grouping. <img src="figure/Dexamethasone-study.Rmd/Library-sizes-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Library-sizes-plot-1">
+Past versions of Library-sizes-plot-1.png
+</button>
+</p>
+<div id="fig-Library-sizes-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Library-sizes-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Visualising the distribution of gene counts in each sample compared to the median value (horizontal blue line) we can see a similar distribution between groups with no clear outliers. <img src="figure/Dexamethasone-study.Rmd/Count-distribution-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Count-distribution-plot-1">
+Past versions of Count-distribution-plot-1.png
+</button>
+</p>
+<div id="fig-Count-distribution-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Count-distribution-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>The sequence quality appears to be consistently good.</p>
 </div>
 <div id="an-unbiased-assessment-of-sample-similarity" class="section level2">
@@ -5251,6 +5342,43 @@ heatmap.2(
   labRow = FALSE
 )</code></pre>
 <p><img src="figure/Dexamethasone-study.Rmd/Variable-genes-heatmap-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Variable-genes-heatmap-1">
+Past versions of Variable-genes-heatmap-1.png
+</button>
+</p>
+<div id="fig-Variable-genes-heatmap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Variable-genes-heatmap-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>These genes are sufficient to separate experimental groupings, and show a primary separation on the basis of Dexamethasone treatment with a secondary separation by genotype. We then proceed to process the data for differential expression analysis.</p>
 </div>
 </div>
@@ -5261,6 +5389,43 @@ heatmap.2(
 <p>First we normalise samples to scale gene expression to library size, permitting comparisons across samples.</p>
 <pre class="r"><code>y &lt;- calcNormFactors(y)</code></pre>
 <p>We can observe a shift in the mean-difference plot of gene expression in the samples towards zero, indicating that the data are better scaled for comparison. <img src="figure/Dexamethasone-study.Rmd/MD-normalisation-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-MD-normalisation-plot-1">
+Past versions of MD-normalisation-plot-1.png
+</button>
+</p>
+<div id="fig-MD-normalisation-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/MD-normalisation-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="model-design" class="section level2">
 <h2>Model design</h2>
@@ -5274,7 +5439,81 @@ rownames(design) &lt;- sampleInfo$Name
 #Convert to a voom object
 v &lt;- voom(y, design, plot = TRUE)</code></pre>
 <p><img src="figure/Dexamethasone-study.Rmd/Voom-object-generation-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Voom-object-generation-1">
+Past versions of Voom-object-generation-1.png
+</button>
+</p>
+<div id="fig-Voom-object-generation-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Voom-object-generation-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We can see below that the normalisation process results in a more homogeneous distribution of counts across samples. The median count value is represented by a line in blue. <img src="figure/Dexamethasone-study.Rmd/Voom-normalisation-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Voom-normalisation-plot-1">
+Past versions of Voom-normalisation-plot-1.png
+</button>
+</p>
+<div id="fig-Voom-normalisation-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Voom-normalisation-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="differential-expression-testing" class="section level1">
@@ -5382,6 +5621,43 @@ vennOverlap&lt;-calculate.overlap(vennList)
 plot.new()
 grid.draw(venn.diagram(vennList,filename=NULL))</code></pre>
 <p><img src="figure/Dexamethasone-study.Rmd/Venn-diagram-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Venn-diagram-1">
+Past versions of Venn-diagram-1.png
+</button>
+</p>
+<div id="fig-Venn-diagram-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Venn-diagram-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="volcano-plots" class="section level2">
 <h2>Volcano plots</h2>
@@ -5389,22 +5665,207 @@ grid.draw(venn.diagram(vennList,filename=NULL))</code></pre>
 <div id="genotype-effect" class="section level3">
 <h3>Genotype effect</h3>
 <p>Throughout this analysis, a positive fold change value for this contrast indicates higher expression in the wild type animal. Note that <em>Actn3</em> is significantly downregulated in the <em>Actn3</em> KO mouse. <img src="figure/Dexamethasone-study.Rmd/Genotype-effect-volcano-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Genotype-effect-volcano-plot-1">
+Past versions of Genotype-effect-volcano-plot-1.png
+</button>
+</p>
+<div id="fig-Genotype-effect-volcano-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Genotype-effect-volcano-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="treatment-effect" class="section level3">
 <h3>Treatment effect</h3>
 <p>Throughout this analysis, a positive fold change value for this contrast indicates higher expression in the Dexamethasone treated animal. <img src="figure/Dexamethasone-study.Rmd/Treatment-effect-volcano-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Treatment-effect-volcano-plot-1">
+Past versions of Treatment-effect-volcano-plot-1.png
+</button>
+</p>
+<div id="fig-Treatment-effect-volcano-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Treatment-effect-volcano-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="treatment-time-interaction-effect" class="section level3">
 <h3>Treatment-time interaction effect</h3>
 <p>For this and the interaction effect plots below, fold change refers to an estimated effect size, and does not have a direct biological interpretation. <img src="figure/Dexamethasone-study.Rmd/Treatment-time-interaction-effect-volcano-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Treatment-time-interaction-effect-volcano-plot-1">
+Past versions of Treatment-time-interaction-effect-volcano-plot-1.png
+</button>
+</p>
+<div id="fig-Treatment-time-interaction-effect-volcano-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Treatment-time-interaction-effect-volcano-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="genotype-treatment-interaction-effect" class="section level3">
 <h3>Genotype-treatment interaction effect</h3>
 <p><img src="figure/Dexamethasone-study.Rmd/Genotype-treatment-interaction-effect-volcano-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Genotype-treatment-interaction-effect-volcano-plot-1">
+Past versions of Genotype-treatment-interaction-effect-volcano-plot-1.png
+</button>
+</p>
+<div id="fig-Genotype-treatment-interaction-effect-volcano-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Genotype-treatment-interaction-effect-volcano-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="genotype-treatment-time-interaction-effect" class="section level3">
 <h3>Genotype-treatment-time interaction effect</h3>
 <p><img src="figure/Dexamethasone-study.Rmd/Genotype-treatment-time-interaction-effect-volcano-plot-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Genotype-treatment-time-interaction-effect-volcano-plot-1">
+Past versions of Genotype-treatment-time-interaction-effect-volcano-plot-1.png
+</button>
+</p>
+<div id="fig-Genotype-treatment-time-interaction-effect-volcano-plot-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Genotype-treatment-time-interaction-effect-volcano-plot-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -5453,6 +5914,43 @@ geneDendrogram &lt;- getDendrogramLabels(
 
 plotHeatmap()</code></pre>
 <p><img src="figure/Dexamethasone-study.Rmd/Clustered-heatmap-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-Clustered-heatmap-1">
+Past versions of Clustered-heatmap-1.png
+</button>
+</p>
+<div id="fig-Clustered-heatmap-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/figure/Dexamethasone-study.Rmd/Clustered-heatmap-1.png" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

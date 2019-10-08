@@ -12,7 +12,7 @@
 
 
 
-<title>Home</title>
+<title>Harrison Wood</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -251,6 +254,63 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -258,6 +318,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -270,18 +340,18 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">harrison-wood-resume</a>
+      <a class="navbar-brand" href="index.html">Harrison Wood</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">Home</a>
+  <a href="index.html">Resume</a>
 </li>
 <li>
-  <a href="about.html">About</a>
+  <a href="Dexamethasone-study.html">RNA-seq analysis</a>
 </li>
 <li>
-  <a href="license.html">License</a>
+  <a href="Full-blood-count-analysis.html">Phenotypic analysis</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -308,7 +378,7 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">Harrison Wood</h1>
 
 </div>
 
@@ -364,10 +434,10 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetree79272274970c260673e281eaf6ba23b2a7fc966dtargetblank7927227a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/harrisonwood/harrison-wood-resume/tree/79272274970c260673e281eaf6ba23b2a7fc966d" target="_blank">7927227</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetreea738a7be48ab24f2e11a68a3982e07809666da0dtargetblanka738a7ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/harrisonwood/harrison-wood-resume/tree/a738a7be48ab24f2e11a68a3982e07809666da0d" target="_blank">a738a7b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetree79272274970c260673e281eaf6ba23b2a7fc966dtargetblank7927227a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomharrisonwoodharrisonwoodresumetreea738a7be48ab24f2e11a68a3982e07809666da0dtargetblanka738a7ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -378,12 +448,11 @@ Ignored files:
 
 Untracked files:
     Untracked:  VennDiagram2019-10-08_13-07-32.log
+    Untracked:  VennDiagram2019-10-08_13-16-14.log
     Untracked:  code/common-functions.R
     Untracked:  data/Dexamethasone-study/
     Untracked:  data/Summary-blood-data.xlsx
-    Untracked:  docs/figure/
     Untracked:  output/Dexamethasone-study/
-    Untracked:  public/
 
 Unstaged changes:
     Modified:   Workflowr-initialisation-script.R
@@ -430,6 +499,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://github.com/harrisonwood/harrison-wood-resume/blob/a738a7be48ab24f2e11a68a3982e07809666da0d/analysis/index.Rmd" target="_blank">a738a7b</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+<td>
+Publish site for interview
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/harrisonwood/harrison-wood-resume/e4db0d763fccc186de1f36da2d3085253f0b6322/docs/index.html" target="_blank">e4db0d7</a>
+</td>
+<td>
+harrisonwood
+</td>
+<td>
+2019-10-08
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://github.com/harrisonwood/harrison-wood-resume/blob/32598e33528b3cbc42d187a70e177f2165ea4e3e/analysis/index.Rmd" target="_blank">32598e3</a>
 </td>
 <td>
@@ -449,7 +552,149 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Welcome to my research website.</p>
+<table>
+<colgroup>
+<col width="33%" />
+<col width="33%" />
+<col width="33%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left"><em>54 Rowena Parade, Richmond, 3121 VIC</em></td>
+<td align="center"><em>+61 406 137 037</em></td>
+<td align="right"><a href="mailto:harrison.wood@mcri.edu.au" class="email">harrison.wood@mcri.edu.au</a></td>
+</tr>
+</tbody>
+</table>
+<p><br></br> This digital resume includes two brief vignettes of my past work for your consideration. These are an <a href="Dexamethasone-study.html">analysis of RNA sequencing data</a> describing a drug study in mice and a <a href="Full-blood-count-analysis.html">statistical analysis of blood parameters</a> assessed in a knockout mouse model.</p>
+<div id="education" class="section level2">
+<h2>Education</h2>
+<div id="section" class="section level4">
+<h4>2018</h4>
+<ul>
+<li>The University of Queensland
+<ul>
+<li><strong>Bachelor of Biomedical Science (Hons I)</strong></li>
+<li>Thesis: <em>“On the Neural Development and Organisation of Hearing in Larval Zebrafish”</em></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<div id="awards" class="section level2">
+<h2>Awards</h2>
+<div id="october-2018" class="section level4">
+<h4>October 2018</h4>
+<ul>
+<li>Graduate Records Examination (<strong>GRE</strong>) results
+<ul>
+<li>Verbal reasoning: raw score of 168, <strong>98<sup>th</sup> percentile</strong></li>
+<li>Quantitative reasoning: raw score of 160, <strong>74<sup>th</sup> percentile</strong></li>
+<li>Analytical writing: raw score of 5.5, <strong>98<sup>th</sup> percentile</strong></li>
+</ul></li>
+</ul>
+</div>
+<div id="honours-year-2017-2018" class="section level4">
+<h4>Honours year, 2017-2018</h4>
+<ul>
+<li>Dean’s Commendation for Academic Excellence</li>
+</ul>
+</div>
+<div id="semester-2-2012" class="section level4">
+<h4>Semester 2, 2012</h4>
+<ul>
+<li>Dean’s Commendation for High Achievement</li>
+</ul>
+</div>
+<div id="january-2012" class="section level4">
+<h4>January 2012</h4>
+<ul>
+<li>UQ Excellence Scholarship</li>
+</ul>
+</div>
+<div id="january-2011" class="section level4">
+<h4>January 2011</h4>
+<ul>
+<li>Recipient of the <strong>Australian Student Prize</strong></li>
+<li>Queensland Certificate of Education <strong>OP1, ATAR 99.95 equivalent</strong></li>
+<li>Dux of A.B. Paterson College</li>
+</ul>
+</div>
+</div>
+<div id="research-experience" class="section level2">
+<h2>Research Experience</h2>
+<div id="may-2018---present" class="section level4">
+<h4>May 2018 - Present</h4>
+<div id="research-assistance-at-the-murdoch-childrens-research-institute" class="section level5">
+<h5>Research assistance at the Murdoch Children’s Research Institute</h5>
+<p>Current research projects include analysis of RNA sequencing data resulting from two separate projects (<strong>manuscripts in preparation</strong>), phenotyping of novel mouse models of muscular dystrophinopathies, and genomic analysis of population-level expression data pertaining to highly prevalent nonsense mutations.</p>
+<p>Experimental work includes surgical and electrophysiological techniques in live animals, dissection, and standard wet laboratory techniques in molecular biology.</p>
+</div>
+</div>
+<div id="section-1" class="section level4">
+<h4>2017-2018</h4>
+<div id="honours-thesis" class="section level5">
+<h5>Honours thesis</h5>
+<p>One year project in circuit-level neuroscience, investigating the development of hearing in the growing zebrafish brain. This thesis involved Calcium imaging of transgenic larval animals, light sheet microscopy, and large scale data analysis. Awarded <strong>First class Honours</strong>.</p>
+<ul>
+<li>Designed and managed my own experiments and analyses</li>
+<li>Presented two seminars, receiving High Distinctions for both</li>
+<li>Contributed to weekly lab meetings and assisted lab members with data analysis, experimental design, and animal husbandry</li>
+</ul>
+</div>
+</div>
+<div id="january-2017" class="section level4">
+<h4>January 2017</h4>
+<div id="summer-semester-research-project" class="section level5">
+<h5>Summer semester research project</h5>
+<p>Six week project in the assessment of clustering methods for analysis of neural activity data. The project involved processing and analysis of data in MATLAB and Python to determine optimal methods of identifying functional units of neural function.</p>
+<p>Awarded a Distinction.</p>
+</div>
+<div id="bioc30056-systems-biochemistry-tutoring" class="section level5">
+<h5>BIOC3005/6 Systems Biochemistry tutoring</h5>
+<p>Responsible for tutoring and assisting in the management of practicals in BIOC3005/6 Molecular Systems Biology at The University of Queensland. Assessed work, presented instructions, and answered student questions about biochemistry, metabolism, and systems-level data analysis. Tutored students in the use of Amix and Chenomx for processing and analysis of MS/MS data, and the theory of principal component analysis.</p>
+</div>
+</div>
+<div id="section-2" class="section level4">
+<h4>2016</h4>
+<div id="biomedical-sciences-capstone-course" class="section level5">
+<h5>Biomedical sciences capstone course</h5>
+<p>Six month project in investigating reproductive phenotypes in <em>C. elegans</em>.</p>
+<ul>
+<li>Maintained experimental animals</li>
+<li>Conducted pharmacological, behavioural, and microscopy-based assays</li>
+<li>Designed and managed experiments in a small student team</li>
+</ul>
+<p>Awarded a High Distinction.</p>
+</div>
+</div>
+</div>
+<div id="technical-skills" class="section level2">
+<h2>Technical skills</h2>
+<div id="data-analysis" class="section level3">
+<h3>Data analysis</h3>
+<p>I have experience in the use of R, MATLAB, and Python for the processing, analysis, and interpretation of large scientific datasets. I have handled and processed datasets in a UNIX based environment and have experience queueing jobs on shared clusters using SLURM. For an example of my work, please browse the pages linked in the header.</p>
+<p>I received undegraduate level training in Python and R during my degree, and expanded on this in a self-taught capacity as a result of strong personal interest in the area. I also have experience in quantitative image analysis using FIJI and Icy.</p>
+</div>
+<div id="wet-lab" class="section level3">
+<h3>Wet lab</h3>
+<p>I am proficient in a full complement of standard bench techniques including Western blots, PCR and electrophoresis, ELISA, and cytokine assays. I have experience with microbial and tissue culture and am trained in sterile technique.</p>
+</div>
+<div id="animal-work" class="section level3">
+<h3>Animal work</h3>
+<p>I have performed &gt;300 dissections on mice and &gt;100 lower-limb surgeries, with extensive experience with the electrophysiology of the neuromuscular system. I have experience with animal husbandry in mice and zebrafish, and have some experience in the handling of larger animals including dogs, cats, and birds, obtained during volunteer work with the Animal Welfare League, Queensland.</p>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<div id="current-supervisor" class="section level4">
+<h4>Current supervisor</h4>
+<p>Dr. <strong>Peter Houweling</strong></p>
+<p>Senior Research Officer and Team Leader, Neuromuscular Research Group</p>
+<p>Murdoch Children’s Research Institute</p>
+<p><a href="mailto:peter.houweling@mcri.edu.au" class="email">peter.houweling@mcri.edu.au</a></p>
+<p><em>+61 430 584 588</em></p>
+</div>
+</div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
@@ -465,6 +710,8 @@ footer is added to webpages before the MathJax javascript. -->
 </script>
 
 
+</div>
+</div>
 
 </div>
 
@@ -497,6 +744,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
