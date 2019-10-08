@@ -1,0 +1,587 @@
+---
+title: "Transcriptional effects of Actn3 genotype on response to Dexamethasone treatment"
+author: "Harrison Wood"
+date: "9/19/2019"
+output: html_document
+---
+
+```{r Install packages, eval=FALSE, include=FALSE}
+#Install Bioconductor and the associated packages for RNA-seq analysis
+install.packages("BiocManager")
+BiocManager::install()
+BiocManager::install(c("limma", "fgsea","edgeR","biomaRt","org.Mm.eg.db","GO.db"))
+
+#Install dplyr for dataframe manipulation
+install.packages("dplyr")
+
+#Install the formattable and datatable packages for presentation of results
+install.packages(c("formattable","DT"))
+
+#Install plotting tools
+install.packages(c("gplots","ggplot2","ggrepel"))
+
+#Install the RColorBrewer package for colour palette selection
+install.packages("RColorBrewer")
+
+#Install the rglwidget package for 3D plots
+install.packages("rglwidget")
+
+#Install the kableExtra package for styled tables
+install.packages("kableExtra")
+
+#Install the condformat package for table based colour keys
+install.packages("condformat")
+
+#Install the dendextend package for cluster analysis
+install.packages("dendextend")
+
+#Install the VennDiagram package for grouping DE genes
+install.packages("VennDiagram")
+```
+
+```{r Setup knitr, include=FALSE}
+#Load knitr library
+library(knitr)
+
+#Set initial knitr options
+knitr::opts_knit$set(
+  fig.width = 12,
+  fig.height = 8,
+  warning = FALSE,
+  message = FALSE,
+  root.dir = normalizePath(".")
+)
+```
+
+```{r Load packages, include=FALSE, warning=FALSE, message=FALSE}
+#Load required packages
+#Bioinformatics tools
+library(edgeR)
+library(limma)
+library(biomaRt)
+library(fgsea)
+#Annotation databases
+library(org.Mm.eg.db)
+library(GO.db)
+#Data tools
+library(dplyr)
+library(dendextend)
+#Plots
+library(gplots)
+library(ggrepel)
+library(ggplot2)
+library(VennDiagram)
+library(RColorBrewer)
+#3D plots
+library(rgl)
+library(rglwidget)
+#Data tables and colour keys
+library(kableExtra)
+library(condformat)
+library(formattable)
+library(DT)
+
+#Set up rgl hooks for 3D plots in Knitr
+setupKnitr()
+
+#Potentially removed
+#library(clusterProfiler)
+#library(pathview)
+```
+
+# Setup
+## Loading data
+
+First we load the shared functions between this and other RNA-seq analyses in the repository. We also define the project name, then load and label its data.
+```{r Project setup, echo=TRUE, warning=FALSE, message=FALSE}
+#Load core RNA-seq analysis functions
+source("./code/common-functions.R")
+
+#Define the project name to set up the output folder
+projectName<-"Dexamethasone-study"
+dir.create(paste("./output",projectName,sep="/"))
+
+#Read the raw gene count files stored in the project folder
+countData <- loadGeneCounts(paste("./data",projectName,sep="/"))
+
+#Extract sample names
+sampleNames <- colnames(countData)
+```
+
+We can inspect the overall structure of the data for the first 100 genes in the table.
+```{r Show data, eval=TRUE, echo=FALSE}
+#We can then inspect the basic structure of the dataset
+as.datatable(formattable(countData[1:100,]),options = list(scrollX = TRUE))
+```
+
+## Defining the experimental design
+
+We then load the sample descriptors and define the factors of the experimental design.
+
+In this study, mice with either *Wild type* (**WT**) or *Actn3 KO* (**KO**) genotypes were treated with either *Dexamethasone* (**DEX**) or *Saline* (**SAL**) injections. Samples were taken either *3 hours* (**3H**) or *24 hours* (**24H**) post injection. 
+```{r Define experimental design, warning=FALSE, message=FALSE}
+#Load sample information table
+sampleInfo <- read.delim(file = paste("./data",projectName,"sampleinfo.txt", sep = "/"))
+
+#Get the experimental factors in the study design
+experimentalFactors <- colnames(sampleInfo[-1])
+#Join sample factors to get the grouping for each sample
+sampleGroups <- do.call(paste, c(sampleInfo[,experimentalFactors], sep = "_"))
+#Get the list of groups in the study
+groups<-sort(unique(sampleGroups))
+#Define sample groups as a factor
+sampleGroups<-factor(sampleGroups,levels=groups)
+
+#Give each group a unique identifying colour for plots
+groupColours <-
+  c(
+    "#ffcf6b",
+    "#bd8102",
+    "#fb6a7b",
+    "#b90017",
+    "#82ef65",
+    "#21a400",
+    "#6b8cde",
+    "#06319c"
+  )
+names(groupColours) <- groups
+
+#Give each sample a colour on the basis of grouping
+sampleColours <-
+  factor(groupColours[sampleGroups], levels = groupColours)
+
+#Show sample information and experimental grouping
+as.datatable(formattable(sampleInfo))
+```
+
+Throughout the analysis, sample groupings are coloured according to the following scheme:
+```{r Colour legend, eval=TRUE, echo=FALSE}
+plotColourLegend(sampleGroupings=sampleGroups,colourGroupings=groupColours)
+```
+
+## Sample preprocessing
+
+We now begin processing the data by transforming values to a counts per million measure and filtering out very lowly expressed genes. Genes were retained if at least 2 samples had at least 0.5 CPM detected.
+```{r CPM preprocessing}
+#Convert raw gene counts to counts per million, and select undetected genes
+CPMdata <- cpm(countData)
+lowCPMValues <- CPMdata > 0.5
+#Select only genes detected in at least 2 samples
+filteredGeneIDs <- rowSums(lowCPMValues) >=2
+
+#We then store this filtered gene count data in a DGElist object from the edgeR package
+y <- DGEList(countData[filteredGeneIDs,])
+```
+
+## Gene annotation
+
+We then annotate the gene list with gene symbols, Entrez IDs, and gene name information populated from the Bioconductor annotation data package. To make subsequent analysis simpler to interpret, we also use these annotations to exclude mitochondrial, ribosomal, and pseudogenes from the dataset. 
+```{r Gene annotation}
+#Select gene annotations from the org.Mm.eg.db database
+annotations <-
+  biomaRt::select(
+    org.Mm.eg.db,
+    keytype = "SYMBOL",
+    keys = rownames(y),
+    columns = c("ENTREZID", "SYMBOL", "GENENAME"),
+    multiVals = "first"
+  )
+#Match these annotations to genes in our dataset
+annotations <-
+  annotations[match(rownames(y), annotations$SYMBOL), ]
+y$genes <- annotations
+
+#Exclude unwanted genes
+excludeUnwantedGenes <- TRUE
+if (excludeUnwantedGenes) {
+  #Select mitochondrial, ribosomal, and pseudogenes
+  mitochondrialGenes <- grep("mitochondrial", y$genes$GENENAME)
+  ribosomalGenes <- grep("ribosomal", y$genes$GENENAME)
+  pseudoGenes <- grep("pseudogene", y$genes$GENENAME)
+  unwantedGenes <-
+    unique(c(mitochondrialGenes, ribosomalGenes, pseudoGenes))
+  #Filter these from the dataset
+  y <- y[-unwantedGenes,]
+}
+```
+
+Of an initial `r dim(countData)[1]` genes, `r dim(y)[1]` are retained for further analysis.
+
+# Quality control
+## Checking sequencing efficacy
+
+Library sizes across samples do not exhibit an obvious bias in grouping.
+```{r Library-sizes-plot, echo=FALSE}
+#Plot sample library sizes to check sequencing efficacy
+barplot(
+  y$samples$lib.size,
+  names = colnames(y),
+  ylab = "Total counts",
+  las = 2,
+  col = as.character(sampleColours)
+)
+title("Sequencing result library size, by sample")
+```
+
+Visualising the distribution of gene counts in each sample compared to the median value (horizontal blue line) we can see a similar distribution between groups with no clear outliers.
+```{r Count-distribution-plot, echo=FALSE}
+#Plot distribution of counts by sample to visualise sequence quality
+logCounts <- cpm(y, log = TRUE)
+boxplot(
+  logCounts,
+  xlab = "",
+  ylab = "Log2 counts per million",
+  las = 2,
+  col = as.character(sampleColours)
+)
+#Add line to show median count number
+abline(h = median(logCounts), col = "blue")
+title("Count distribution of genes by sample")
+```
+
+The sequence quality appears to be consistently good.
+
+## An unbiased assessment of sample similarity
+
+We then graph samples in a multidimensional scaling plot to assess similarity within groupings and the general structure of the data. 
+```{r MDS plotting}
+dimensions.1.2.MDS <- plotMDS(y, dim.plot = c(1, 2), plot = FALSE)
+dimensions.3.4.MDS <- plotMDS(y, dim.plot = c(3, 4), plot = FALSE)
+```
+
+```{r Sample clustering MDS plot, echo=FALSE, webgl=TRUE, results="asis", warning=FALSE, message=FALSE}
+plotColourLegend(sampleGroupings = sampleGroups, colourGroupings = groupColours)
+
+plot3d(
+  x = dimensions.1.2.MDS$x,
+  y = dimensions.1.2.MDS$y,
+  z = dimensions.3.4.MDS$x,
+  xlab = "log2 FC (Dimension 1)",
+  ylab = "log2 FC (Dimension 2)",
+  zlab = "log2 FC (Dimension 3)",
+  col = sampleColours,
+  type = "p",
+  size = 6
+)
+bg3d("grey90")
+```
+
+The MDS plot above can be rotated by clicking and dragging. 
+
+We observe a clear separation of samples on the basis of experimental factors. Both genotypes clearly segregate along Dimension 3, while Dimensions 1 and 2 delineate immediate and progressive responses to Dexamethasone treatment, respectively. 
+
+## Clustering highly variable genes
+
+We then plot a heatmap of the 500 most highly variable genes to investigate whether these are delineated by experimental grouping. 
+```{r Variable-genes-heatmap}
+#Get variance of log counts on a row-by-row basis
+geneVariance <- apply(logCounts, MARGIN = 1, FUN = var)
+#Select the top 500
+topVariableGenes <- names(sort(geneVariance, decreasing = TRUE))[1:500]
+topVariableLogCPM <- logCounts[topVariableGenes, ]
+
+heatmap.2(
+  topVariableLogCPM,
+  ColSideColors = as.character(sampleColours),
+  trace = "none",
+  key = FALSE,
+  labRow = FALSE
+)
+```
+
+These genes are sufficient to separate experimental groupings, and show a primary separation on the basis of Dexamethasone treatment with a secondary separation by genotype. We then proceed to process the data for differential expression analysis.
+
+
+# Sample processing
+## Normalisation
+
+First we normalise samples to scale gene expression to library size, permitting comparisons across samples.
+```{r Sample normalisation}
+y <- calcNormFactors(y)
+```
+
+We can observe a shift in the mean-difference plot of gene expression in the samples towards zero, indicating that the data are better scaled for comparison. 
+```{r MD-normalisation-plot, echo=FALSE}
+#Plot the bias
+par(mfrow = c(1, 2))
+plotMD(logCounts, column = 6)
+abline(h = 0, col = "grey")
+
+plotMD(y, column = 6)
+abline(h = 0, col = "grey") 
+```
+
+## Model design
+
+We then construct a design matrix and convert the gene counts into a corresponding *voom* object from *limma* to normalise for a variety of factors. The below plot shows the estimated mean-variance trend (in red) used to correct for transcript length bias in the dataset.
+```{r Voom-object-generation}
+#Construct a design matrix delineating experimental groups
+design <- model.matrix(~ 0 + sampleGroups)
+#Label the design matrix
+colnames(design) <- groups
+rownames(design) <- sampleInfo$Name
+
+#Convert to a voom object
+v <- voom(y, design, plot = TRUE)
+```
+
+We can see below that the normalisation process results in a more homogeneous distribution of counts across samples. The median count value is represented by a line in blue.
+```{r Voom-normalisation-plot, echo=FALSE}
+par(mfrow = c(1, 2))
+
+boxplot(
+  logCounts,
+  xlab = "",
+  ylab = "Log2 counts per million",
+  las = 2,
+  main = "Unnormalised logCPM"
+)
+abline(h = median(logCounts), col = "blue")
+
+boxplot(
+  v$E,
+  xlab = "",
+  ylab = "Log2 counts per million",
+  las = 2,
+  main = "Normalised logCPM"
+)
+abline(h = median(v$E), col = "blue")
+```
+
+# Differential expression testing
+## Linear modelling
+
+Differential expression is calculated by fitting a linear model to the normalised gene counts, and assessing differences across contrasting groups of interest. In each of the contrasts, we pool saline-treated samples because the different sampling timepoints show very similar results.
+```{r Linear modelling}
+fit <- lmFit(v)
+
+#Select testing comparisons to make
+#The contrast matrix defines which contrasts will be selected for differential expression testing. Each contrast is labeled and defined individually below.
+contrastMatrix <- makeContrasts(
+  #Genotype effect
+  'KO vs WT' = (
+    ((KO_SAL_3H + KO_SAL_24H + KO_DEX_3H + KO_DEX_24H) / 4) - 
+      ((WT_SAL_3H + WT_SAL_24H + WT_DEX_3H + WT_DEX_24H) / 4)
+    ),
+  
+  #Treatment effect
+  'Dex vs Saline' = (
+    ((WT_DEX_3H + WT_DEX_24H + KO_DEX_3H + KO_DEX_24H) / 4) -
+      ((WT_SAL_3H + WT_SAL_24H + KO_SAL_3H + KO_SAL_24H) / 4)
+    ),
+  
+  #Treatment-time interaction effect
+  #A time effect is not modelled for saline samples due to their high similarity
+  'Change in overall Dex response over time' = (
+    ((KO_DEX_24H + WT_DEX_24H) / 2) -
+      ((KO_DEX_3H + WT_DEX_3H) / 2)
+    ),
+  
+  #Genotype-treatment interaction effect
+  'Overall genotype gap in Dex response' = (
+    ((((KO_DEX_3H + KO_DEX_24H) / 2) - ((KO_SAL_3H + KO_SAL_24H / 2)))) -
+      (((WT_DEX_3H + WT_DEX_24H) / 2) - ((WT_SAL_3H + WT_SAL_24H / 2)))
+    ),
+  
+  #Genotype-treatment-time interaction effect
+  'Time specific genotype gap in Dex response' = (
+    (KO_DEX_24H - WT_DEX_24H) -
+      (KO_DEX_3H - WT_DEX_3H)
+    ),
+  levels = design
+)
+```
+
+## Differential expression calculation
+
+Now that the linear model has been fit and contrasts have been defined, contrasts are fit to the linear model and probabilities are calculated for differential expression.
+```{r Differential expression}
+#Compute coefficients for the fit linear model on the basis of the defined contrasts
+contrastFit <- contrasts.fit(fit, contrastMatrix)
+
+#Estimate the probability of differential expression across these contrasts
+contrastFit <- eBayes(contrastFit)
+
+#Store the results of differential expression testing
+differentialExpressionResults <- list()
+for (i in seq_along(colnames(contrastFit))) {
+  differentiallyExpressedGenes <- topTable(
+    contrastFit,
+    coef = colnames(contrastFit)[i],
+    sort.by = "p",
+    number = Inf
+  )
+  differentialExpressionResults[[i]] <- differentiallyExpressedGenes
+  rm(differentiallyExpressedGenes)
+}
+names(differentialExpressionResults) <- colnames(contrastFit)
+```
+
+We also identify significantly differentially expressed genes on the basis of a Benjamini-Hochberg procedure, with a nominal false discovery rate of 0.05. This uses the default settings of limma::decideTests.
+```{r}
+#Summarise the test results with decideTests
+summaryFit <- decideTests(contrastFit)
+```
+
+```{r Differential expression summary settings, echo=FALSE}
+#Select the number of most highly differentially expressed genes to display in the subsequent table
+summaryTableGeneNumber <- 500
+
+#Select the contrast for which to display differential expression
+summaryTableContrast<- "KO vs WT"
+```
+
+## Differential expression results
+
+The top `r summaryTableGeneNumber` genes are presented for the *`r summaryTableContrast`* contrast. 
+```{r Differential expression results, echo=FALSE}
+as.datatable(formattable(
+  differentialExpressionResults[[summaryTableContrast]][1:summaryTableGeneNumber,],
+  list(adj.P.Val = color_tile("red", "transparent"))
+),
+options = list(scrollX = TRUE))
+```
+
+Full results from differential expression testing are then exported to the output folder.
+```{r Export differential expression results}
+for (i in seq_along(colnames(contrastFit))){
+  #Write one output file containing the summary table for each contrast, exported to the projectName folder
+  outputFile<-paste("./output/",projectName,"/","DE genes - ",colnames(contrastFit)[i],".csv",sep="")
+  write.csv(differentialExpressionResults[[i]],outputFile)
+}
+```
+
+# Differential expression plots
+## Venn diagram
+
+Statistical testing suggests several thousand differentially expressed genes across the main contrasts of interest. These are summarised below.
+```{r Venn-diagram}
+#Generate a list of significantly DE genes for each contrast
+contrastSigNames<-list()
+for(i in seq_along(colnames(contrastFit))){
+  contrastSigNames[[i]]<-names(which(summaryFit[,i]!=0))
+}
+#Name this list according to each contrast
+names(contrastSigNames)<-colnames(contrastFit)
+
+#Select the contrasts for which to plot the overlaps
+vennContrasts<-c(1,2,3)
+vennList<-contrastSigNames[vennContrasts]
+names(vennList)<-colnames(contrastFit)[vennContrasts]
+#Determine the shared elements of the lists
+vennOverlap<-calculate.overlap(vennList)
+
+#Draw the Venn diagram
+plot.new()
+grid.draw(venn.diagram(vennList,filename=NULL))
+```
+
+## Volcano plots
+```{r Specify volcano plot parameters, echo=FALSE}
+calloutGeneNumber<-15
+calloutGeneColour<-"red"
+```
+In the volcano plots below, the top `r calloutGeneNumber` genes (if significant) are highlighted in `r calloutGeneColour`. Vertical dashed lines represent a doubling or halving of gene expression, and the horizontal dashed line indicates an adjusted p=0.05. 
+
+### Genotype effect
+
+Throughout this analysis, a positive fold change value for this contrast indicates higher expression in the wild type animal. Note that *Actn3* is significantly downregulated in the *Actn3* KO mouse.
+```{r Genotype-effect-volcano-plot, echo=FALSE}
+plotVolcano(dataset = differentialExpressionResults,
+           summaryTable = summaryFit,
+           contrast = 1,
+           calloutGenes = calloutGeneNumber,
+           calloutColour = calloutGeneColour)
+```
+
+### Treatment effect
+
+Throughout this analysis, a positive fold change value for this contrast indicates higher expression in the Dexamethasone treated animal.
+```{r Treatment-effect-volcano-plot, echo=FALSE}
+plotVolcano(dataset = differentialExpressionResults,
+           summaryTable = summaryFit,
+           contrast = 2,
+           calloutGenes = calloutGeneNumber,
+           calloutColour = calloutGeneColour)
+```
+
+### Treatment-time interaction effect
+
+For this and the interaction effect plots below, fold change refers to an estimated effect size, and does not have a direct biological interpretation.
+```{r Treatment-time-interaction-effect-volcano-plot, echo=FALSE}
+plotVolcano(dataset = differentialExpressionResults,
+           summaryTable = summaryFit,
+           contrast = 3,
+           calloutGenes = calloutGeneNumber,
+           calloutColour = calloutGeneColour)
+```
+
+### Genotype-treatment interaction effect
+```{r Genotype-treatment-interaction-effect-volcano-plot, echo=FALSE}
+plotVolcano(dataset = differentialExpressionResults,
+           summaryTable = summaryFit,
+           contrast = 4,
+           calloutGenes = calloutGeneNumber,
+           calloutColour = calloutGeneColour)
+```
+
+### Genotype-treatment-time interaction effect
+```{r Genotype-treatment-time-interaction-effect-volcano-plot, echo=FALSE}
+plotVolcano(dataset = differentialExpressionResults,
+           summaryTable = summaryFit,
+           contrast = 5,
+           calloutGenes = calloutGeneNumber,
+           calloutColour = calloutGeneColour)
+```
+
+# Patterns of differential expression
+## Filtering
+
+We proceed to assess coordinated shifts in gene expression. Only genes asssessed as significantly differentially expressed (as described earlier) with a prescribed minimum fold change in any assessed contrast are included in the heatmaps that follow.
+
+```{r Filtering}
+#Select the minimum fold change of differential expression for inclusion in heatmaps
+foldChangeThreshold <- 2
+log2FoldChangeThreshold <- log2(foldChangeThreshold)
+
+#Filter the geneset
+filteredGenes<-filterGenes(dataset=differentialExpressionResults,
+                           summaryTable=summaryFit,
+                           contrastsToConsider=colnames(contrastFit),
+                           filterSig=TRUE,
+                           filterFC=TRUE,
+                           fcThreshold=log2FoldChangeThreshold)
+```
+
+Of a total `r dim(summaryFit)[1]` genes for which differential expression was assessed, `r length(filteredGenes)` are retained for analysis in the heatmap.
+
+## Clustered heatmap
+```{r Heatmap cluster generation, fig.show="hide"}
+baseHeatMap <- generateBaseHeatmapFunction(
+  geneList = filteredGenes,
+  dataset = v$E,
+  clusterMethod = "ward.D2",
+  sampleSetLabel = as.character(sampleColours)
+)
+
+geneDendrogram <- getDendrogramLabels(
+  heatmapFunction = baseHeatMap,
+  geneList = filteredGenes,
+  dataset = v$E,
+  clusterDepth = 10
+)
+```
+
+To identify coordinated shifts in gene expression related to experimental grouping, we then cluster sample expression data on the basis of both gene-wise and sample-wise variation. 
+```{r Clustered-heatmap}
+plotHeatmap<-generateHeatmapFunction(geneList = filteredGenes,
+                                   dataset = v$E,
+                                   clusterGenes = TRUE,
+                                   clusterMethod = "ward.D2",
+                                   clusterDepth = 10,
+                                   suppliedDendrogram = geneDendrogram,
+                                   geneSetLabel = NULL,
+                                   sampleSetLabel = as.character(sampleColours))
+
+plotHeatmap()
+```

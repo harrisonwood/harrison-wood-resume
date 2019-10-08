@@ -1,0 +1,411 @@
+---
+title: "Full blood count analysis"
+author: "Harrison Wood"
+date: "9/19/2019"
+output: html_document
+---
+
+```{r Install packages, eval=FALSE, include=FALSE}
+#Install the excel file reader package
+install.packages("readxl")
+
+#Install the RColorBrewer package
+install.packages("RColorBrewer")
+
+#Install the rglwidget package for 3D plots
+install.packages("rglwidget")
+
+#Install the kableExtra package for styled tables
+install.packages("kableExtra")
+
+#Install the condformat package for table based colour keys
+install.packages("condformat")
+
+#Install the formattable and datatable packages for presentation of results
+install.packages("formattable")
+install.packages("DT")
+
+#Install the nonlinear mixed effects models package for statistical modelling
+install.packages("nlme")
+```
+
+```{r Setup, include=FALSE}
+#Load knitr library
+library(knitr)
+
+#Set initial knitr options
+knitr::opts_knit$set(
+  fig.width = 12,
+  fig.height = 8,
+  warning = FALSE,
+  message = FALSE,
+  root.dir = normalizePath(".")
+)
+
+#Load libraries for 3D plots
+library(rgl)
+library(rglwidget)
+#Load library for reading Excel files
+library(readxl)
+#Load library for making colour schemes
+library(RColorBrewer)
+#Load library for biplots
+library(ggbiplot)
+#Load library for styled kable tables
+library(kableExtra)
+#Load library for table based colour keys
+library(condformat)
+#Load libraries for tabular presentation of results
+library(formattable)
+library(DT)
+#Load library for nonlinear statistical modelling
+library(nlme)
+
+#Set up rgl hooks for 3D plots in Knitr
+setupKnitr()
+```
+
+## Loading data
+
+Data are stored in the ./data/ folder, and consist of full blood count measurements from an Advia 2120i Haematology system. Measurements were made on blood draws obtained via cardiac puncture of isofluorane-anaesthetised mice and stored in EDTA-coated tubes. 
+
+First we load the data in .xlsx format
+
+```{r Load data}
+#Load the summary blood data
+rawData <- read_excel("data/Summary-blood-data.xlsx")
+data <- as.data.frame(rawData)
+```
+
+```{r Show data, eval=TRUE, echo=FALSE}
+#We can then inspect the basic structure of the dataset
+as.datatable(formattable(data),options = list(scrollX = TRUE))
+```
+
+## Clean up data
+
+We then clean up the data for further analysis. This includes removing labels and descriptors, failed samples, and, optionally, categorical descriptors.
+
+```{r Clean up data}
+#Remove failed samples
+removeFailures <- TRUE
+if (removeFailures) {
+  completedSamples <- data$`Processed?` == "Y"
+  data <- data[completedSamples,]
+}
+
+#Remove abnormal samples
+removeAbnormals <- TRUE
+if (removeAbnormals) {
+  normalSamples <- data$atyps_cond == 0
+  data <- data[normalSamples,]
+}
+
+#Clean up the data by excluding fields irrelevant to the analysis
+labelFields <-
+  c(
+    "Age",
+    "Processed?",
+    "Notes",
+    "Idee",
+    "Instr#",
+    "SampleMode",
+    "SampleSel",
+    "Sequence",
+    "Date/Time"
+  )
+data <- data[, !(names(data) %in% labelFields)]
+
+#Drop the fields containing categorical descriptions
+categoricalFields <-
+  c(
+    "micro_cond",
+    "macro_cond",
+    "hypo_cond",
+    "hyper_cond",
+    "aniso_cond",
+    "var_cond",
+    "left_shift_cond",
+    "blast_cond",
+    "atyps_cond",
+    "nrbc_cond",
+    "ig_cond",
+    "large_plt_cond",
+    "plt_clumps_cond",
+    "mpo_deficiency",
+    "rbc_fragments_condition",
+    "rbc_ghosts_condition"
+  )
+removeCategoricals <- TRUE
+if (removeCategoricals) {
+  data <- data[, !(names(data) %in% categoricalFields)]
+}
+
+#Clean up variable names to permit use in formulae later in analysis
+names(data)<-make.names(names(data))
+
+#Ensure each animal has a unique identifier
+data[,"ID.."]<-make.unique(as.character(data[,"ID.."]))
+```
+
+## Experimental design
+
+We then factorise the independent variables and set up descriptors for the experimental design to prepare for plotting and later analysis.
+
+```{r Experimental design}
+#Group genotypes based on Actn3 presence or absence
+data$Actn3 <- factor((data$Genotype == "WT" | data$Genotype == "RR"))
+levels(data$Actn3) <- c("KO", "WT")
+
+#Factor independent variables describing the experimental design
+independentVariables <-
+  c("ID..",
+    "Model",
+    "Genotype",
+    "Sex",
+    "Intervention",
+    "Date.collected",
+    "Actn3")
+data[independentVariables] <-
+  lapply(data[independentVariables], factor)
+
+#Generate a list of the dependent properties being measured
+dependentVariables <- colnames(data)[!colnames(data)%in%independentVariables]
+
+#Define colours for each grouping of independent variables
+#Generate a data frame containing the colour key for the independent variable to be assessed
+generateColourKey <- function(plotGrouping = plotGrouping) {
+  plotColours <-
+    suppressWarnings(I(brewer.pal(nlevels(data[, plotGrouping]), name =
+                                    "Set1"))[1:nlevels(data[, plotGrouping])])
+  names(plotColours) <- levels(data[, plotGrouping])
+  return(plotColours)
+}
+
+#Generate a colour legend for the independent variable
+showColourLegend <- function(plotColours = plotColours) {
+  suppressWarnings(
+    condformat(data.frame(Category = names(plotColours))) +
+      rule_fill_discrete(1, expression = names(plotColours), colours = plotColours)
+  )
+}
+```
+
+## Principal component analysis
+
+We then calculate the principal components of the dataset after centering and scaling, and plot the PCA coloured by each experimental factor to investigate the distrubtion of samples.
+
+```{r PCA, echo=TRUE}
+#Exclude outlier samples biasing the PCA
+outlierSamples <- c("313")
+excludeOutliers <- TRUE
+if (excludeOutliers) {
+  #Filter out the outliers
+  PCAdata <- data[!data$ID.. %in% outlierSamples, ]
+}
+
+#Extract the labels
+PCAlabels<-PCAdata[, (names(PCAdata) %in% independentVariables)]
+#Then trim them from the dataset
+PCAdata<-PCAdata[, !(names(PCAdata) %in% independentVariables)]
+
+#Compute the PCA
+PCA<-prcomp(PCAdata,center=TRUE,scale=TRUE)
+```
+
+```{r Define PCA plotting functions, include=FALSE}
+#Plot the PCA along the given components
+plot3DPCA <- function(PCA = PCA,
+                    components = c(1, 2, 3),
+                    plotGrouping = plotGrouping,
+                    plotColours = plotColours) {
+  plot3d(
+    PCA$x[, components[1]],
+    PCA$x[, components[2]],
+    PCA$x[, components[3]],
+    xlab = paste(
+      "PC ",
+      components[1],
+      " (",
+      round(summary(PCA)$importance[2, components[1]] * 100, 1),
+      "% var.)",
+      sep =
+        ""
+    ),
+    ylab = paste(
+      "PC ",
+      components[2],
+      " (",
+      round(summary(PCA)$importance[2, components[2]] * 100, 1),
+      "% var.)",
+      sep =
+        ""
+    ),
+    zlab = paste(
+      "PC ",
+      components[3],
+      " (",
+      round(summary(PCA)$importance[2, components[3]] * 100, 1),
+      "% var.)",
+      sep =
+        ""
+    ),
+    type = "p",
+    size = 6,
+    col = plotColours[match(PCAlabels[, plotGrouping], names(plotColours))]
+  )
+  title3d(paste("PCA coloured by ", plotGrouping, sep = ""))
+  bg3d("grey90")
+}
+
+#Plot two parallel PCAs for a given variable
+graphVariable <- function(variable = plotGrouping, PCA = PCA, plotColours=plotColours) {
+  mfrow3d(1, 2)
+  plot3DPCA(
+    PCA = PCA,
+    components = c(1, 2, 3),
+    plotGrouping = variable,
+    plotColours = plotColours
+  )
+  plot3DPCA(
+    PCA = PCA,
+    components = c(1, 4, 5),
+    plotGrouping = variable,
+    plotColours = plotColours
+  )
+}
+```
+
+### Plot each independent variable
+Click and drag on any plot to rotate the view.
+
+### Actn3 
+```{r Plot Actn3, webgl=TRUE, message=FALSE, echo=FALSE, results="asis", fig.width=9, fig.height=6}
+plotGrouping <- "Actn3"
+plotColours<-generateColourKey(plotGrouping)
+showColourLegend(plotColours)
+graphVariable(variable=plotGrouping,PCA=PCA,plotColours=plotColours)
+```
+
+### Sex 
+```{r Plot Sex, webgl=TRUE, message=FALSE, echo=FALSE, results="asis", fig.width=9, fig.height=6}
+plotGrouping <- "Sex"
+plotColours<-generateColourKey(plotGrouping)
+showColourLegend(plotColours)
+graphVariable(variable=plotGrouping,PCA=PCA,plotColours=plotColours)
+```
+
+### Genotype 
+```{r Plot Genotype, webgl=TRUE, message=FALSE, echo=FALSE, results="asis", fig.width=9, fig.height=6}
+plotGrouping <- "Genotype"
+plotColours<-generateColourKey(plotGrouping)
+showColourLegend(plotColours)
+graphVariable(variable=plotGrouping,PCA=PCA,plotColours=plotColours)
+```
+
+### Model 
+```{r Plot Model, webgl=TRUE, message=FALSE, echo=FALSE, results="asis", fig.width=9, fig.height=6}
+plotGrouping <- "Model"
+plotColours<-generateColourKey(plotGrouping)
+showColourLegend(plotColours)
+graphVariable(variable=plotGrouping,PCA=PCA,plotColours=plotColours)
+```
+
+### Intervention 
+```{r Plot Intervention, webgl=TRUE, message=FALSE, echo=FALSE, results="asis", fig.width=9, fig.height=6}
+plotGrouping <- "Intervention"
+plotColours<-generateColourKey(plotGrouping)
+showColourLegend(plotColours)
+graphVariable(variable=plotGrouping,PCA=PCA,plotColours=plotColours)
+```
+
+### Sex effect biplot
+
+We observe an apparent delineation by sex along PCs 1 and 5, and can plot this with the loadings for further investigation.
+
+```{r Biplot, eval=TRUE}
+plotGrouping <- "Sex"
+plotColours <- generateColourKey(plotGrouping)
+colScale <-
+  scale_colour_manual(name = "Category", values = plotColours)
+ggbiplot(
+  PCA,
+  choices = c(1, 5),
+  labels = PCAlabels$ID..,
+  groups = PCAlabels[, plotGrouping],
+  ellipse = TRUE,
+) + colScale
+```
+
+## Statistical modelling
+
+Testing the effects of the experimental factors is done by estimating parameters for a linear mixed effects model, as below. 
+
+```{r General linear model, eval=TRUE}
+#Define which parameters should be tested
+testParameters <- dependentVariables
+
+#Define the model to test
+specifiedModel <-
+  "~Intervention+Actn3+Model+Sex+(Model:Actn3)+(Sex:Actn3)"
+numberOfModelParameters <- 7
+
+#Define our threshold for significance (highlights p values later)
+sigThreshold <- 0.05
+
+#Define function to estimate a model for a given parameter
+calculateModel <-
+  function(modelDataset = data,
+           modelToTest = specifiedModel,
+           parameter = dependentVariables[1]) {
+    lmm <-
+      lme(
+        fixed = as.formula(paste(parameter,
+                                 modelToTest,
+                                 sep = "")),
+        random =  ~ 1 | Date.collected,
+        method = "REML",
+        data = modelDataset
+      )
+    return(lmm)
+  }
+
+#Set numerical display options, then show results
+options(digits = 5, scipen = 15)
+
+#Set up data frame to store model results
+modelResults <-
+  data.frame(
+    matrix(
+      vector(),
+      numberOfModelParameters,
+      length(testParameters),
+      dimnames = list(c(), testParameters)
+    ),
+    stringsAsFactors = F
+  )
+
+#Evaluate the model for each parameter to be tested and store the results
+for (i in seq_along(testParameters)) {
+  parameterResult <-
+    data.frame(anova.lme(calculateModel(parameter = testParameters[i])), type = "marginal")
+  modelResults[, testParameters[i]] <-
+    round(parameterResult[, "p.value"], 5)
+}
+rownames(modelResults) <- rownames(parameterResult)
+
+#Drop the intercept row of the results table
+modelResults <- modelResults[!rownames(modelResults) == "(Intercept)", ]
+#Transpose for readability
+modelResults <- as.data.frame(t(modelResults))
+```
+
+### Coefficient p values
+```{r Display results table, echo=FALSE}
+as.datatable(formattable(modelResults, list(
+  area(col = 1:6) ~ formatter("span", style = x ~ ifelse(
+    x < sigThreshold,
+    style(color = "red", font.weight = "bold"), NA
+  ))
+)))
+```
