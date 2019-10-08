@@ -1,7 +1,7 @@
-name: "harrison-wood-resume"
+name: harrison-wood-resume
 output_dir: ../docs
 navbar:
-  title: "harrison-wood-resume"
+  title: harrison-wood-resume
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/harrisonwood/harrison-wood-resume
 output:
   workflowr::wflow_html:
     toc: yes
